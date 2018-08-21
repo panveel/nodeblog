@@ -8,7 +8,6 @@ var session = require('express-session');
 var favicon = require('serve-favicon');
 var multer = require('multer');
 var upload = multer({dest: 'uploads/'});
-var moment = require('moment');
 var expressValidator = require('express-validator');
 var flash = require('connect-flash');
 
@@ -16,9 +15,12 @@ var mongo = require('mongodb');
 var db = require('monk')('localhost/nodeblog');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var postsRouter = require('./routes/posts');
+var categoriesRouter = require('./routes/categories');
 
 var app = express();
+
+app.locals.moment = require('moment');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -70,7 +72,8 @@ app.use(function(req,res,next) {
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
+app.use('/categories', categoriesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
