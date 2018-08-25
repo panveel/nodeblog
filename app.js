@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var favicon = require('serve-favicon');
 var multer = require('multer');
-var upload = multer({dest: 'uploads/'});
+var upload = multer({dest: './public/uploaded'});
 var expressValidator = require('express-validator');
 var flash = require('connect-flash');
 
@@ -21,6 +21,11 @@ var categoriesRouter = require('./routes/categories');
 var app = express();
 
 app.locals.moment = require('moment');
+
+app.locals.truncateText = function (text, length) {
+  var truncatedText = text.substring(0, length);
+  return truncatedText
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -89,6 +94,16 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
 
 module.exports = app;
